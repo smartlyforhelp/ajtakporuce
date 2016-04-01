@@ -1,0 +1,194 @@
+		<section id="jobs">
+			<div class="container">
+                <?php if($user->ifLogin() AND $user->getMyData('id') == $main->DataReturn('uzivatel','zakazky','id',$_GET["id"])){?>
+				<form enctype="multipart/form-data" method="POST">
+					<div class="row">
+						<div class="col-sm-12">
+							<br><br>
+							<div class="form-group" id="job-email-group">
+								<label for="job-email">Kontaktní e-mail</label>
+								<input type="email" name="email" class="form-control" id="job-email" placeholder="vy@email.cz" value="<?php echo $main->Data('email','zakazky','id',$_GET["id"]); ?>" required>
+							</div>
+							<br>
+							<h2> Kdy? </h2>
+							
+                            <div class="col-sm-6">
+							<div class="row">
+							<div class="form-group" id="job-email-group">
+								<label for="job-email">Datum realizace</label><br>
+								<input type="text" name="datum_od" class="form-control" id="datepicker" style="width:45%; display:inline-block;" value="<?php echo $main->Data('datum_do','zakazky','id',$_GET["id"]); ?>"> -
+						    	<label for="job-email"></label>
+								<input type="text" name="datum_do" class="form-control" id="datepicker2" style="width:45%; display:inline-block;" value="<?php echo $main->Data('datum_do','zakazky','id',$_GET["id"]); ?>">
+							</div>	
+                            </div>
+							</div>				
+
+							<div class="col-sm-6">
+							<div class="row">
+							<div class="form-group" id="job-email-group">
+								<label for="job-email">Možný čas realizace</label><br>
+								od <select name="cas_od" id="cas_od" style="width:15%; min-width:100px; display:inline-block;" class="form-control"> <?php  for($i=0; $i<=23; $i++) { echo '<option'; if(date("G", strtotime($main->DataReturn('cas_od','zakazky','id',$_GET["id"]))) == $i) echo ' selected'; echo ' value="'.$i.'">'.$i; } ?> </select> hodin
+						    	<label for="job-email"></label>
+								do <select name="cas_do" id="cas_do" style="width:15%; min-width:100px; display:inline-block;" class="form-control"> <?php  for($i=0; $i<=23; $i++) { echo '<option'; if(date("G", strtotime($main->DataReturn('cas_do','zakazky','id',$_GET["id"]))) == $i) echo ' selected';  echo ' value="'.$i.'">'.$i; } ?> </select> hodin
+							</div>		
+                            </div>
+							</div>
+							<script>
+							 jQuery('#cas_od').on('change', function() {
+							   
+							   var cas_od = $("#cas_od").val();	
+							   var cas_do = $("#cas_od").val();	
+							   
+							   $("#cas_do option").each(function(){
+								   $(this).removeAttr("disabled");
+							   });
+							   
+							   for (i = 0; i <= cas_od; i++){
+								   
+								   $("#cas_do option[value="+i+"]").attr("disabled","true");
+								   
+							   }
+       					     });
+							 
+							 jQuery('#cas_do').on('change', function() {
+							   
+							   var cas_od = $("#cas_od").val();	
+							   var cas_do = $("#cas_do").val();	
+
+							   $("#cas_od option").each(function(){
+								   $(this).removeAttr("disabled");
+							   });
+							   
+							   for (i = cas_do; i <= 23; i++){
+								   
+								   $("#cas_od option[value="+i+"]").attr("disabled","true");
+								   
+								   if(i==23)
+								   {
+									   break;
+								   }
+								   
+							   }
+       					     });							 
+							</script>							
+							<br><br><br><br>
+							<h2> Kde? </h2>
+							
+							<div class="col-sm-6">
+							<div class="row">							
+							<div class="form-group" id="job-region-group" style="width:95%">
+								<label for="job-region">Kraj</label>
+								<select  class="form-control" name="kraj"  id="job-region">
+									<?php 
+									 $sql_kraje = $db->runQuery("SELECT * FROM obsah_webu WHERE item='kraj'");
+									 while($row = mysqli_fetch_array($sql_kraje)){
+										 ?>
+										 <option value="<?php echo $row["polozka"]; ?>"<?php if($main->DataReturn('kraj','zakazky','id',$_GET["id"]) == $row["polozka"]) echo " selected"; ?>><?php echo $row["polozka"]; ?>
+										 <?php
+									 }
+									?>
+								</select>
+							</div>			
+                            </div>
+                            </div>	
+							
+							<div class="col-sm-6">
+							<div class="row">							
+							<div class="form-group" id="job-location-group">
+								<label for="job-location">Město (nepovinné)</label>
+								<input type="text" class="form-control" name="mesto"  id="job-location" placeholder="např. Praha 1" required value="<?php echo $user->Data('mesto','zakazky','id',$_GET["id"]); ?>">
+							</div>	
+                            </div>
+                            </div>	
+							
+							<br><br><br><br>
+							<div class="row" style="margin-left:0px; margin-right:0px;">
+							
+							<h2> Co? </h2>
+							<div class="col-sm-6">
+							<div class="row">							
+							<div class="form-group" id="job-title-group">
+								<label for="job-title">Nadpis</label>
+								<input type="text" class="form-control" name="nadpis"  id="job-title" placeholder="např. Hledám někoho pro opravu PC" required value="<?php echo $user->Data('nadpis','zakazky','id',$_GET["id"]); ?>">
+							</div>
+                            </div>
+							</div>
+
+							<div class="col-sm-6">
+							<div class="row">							
+							<div class="form-group" id="job-category-group">
+								<label for="job-category" name="obrazek">Obrázek</label>
+								<input type="file" name="obrazek" class="form-control">
+							</div>	
+                            </div>
+                            </div>								
+							
+							<div class="col-sm-6">
+							<div class="row">
+							<div class="form-group" id="job-category-group">
+								<label for="job-category">Kategorie</label>
+								<select  class="form-control" name="kategorie" id="job-category">
+									<?php 
+									 $sql_kraje = $db->runQuery("SELECT * FROM kategorie WHERE typ='1' ORDER BY kategorie");
+									 while($row = mysqli_fetch_array($sql_kraje)){
+										 ?>
+										 <option value="<?php echo $row["id"]; ?>" data-chain="<?php echo $row["id"]; ?>"<?php if($row["kategorie"] == $main->DataReturn('kategorie','zakazky','id',$_GET["id"])) echo " selected"; ?>><?php echo $row["kategorie"]; ?>
+										 <?php
+									 }
+									?>
+								</select>
+							</div>
+                            </div>
+                            </div>	
+                             
+							<div class="col-sm-6">
+							<div class="row">
+							<div class="form-group" id="job-category-group">
+								<label for="job-category">Podategorie</label>
+								<select  class="form-control" name="podkategorie" id="job-subcategory">
+									<?php 
+									 $sql_kraje = $db->runQuery("SELECT * FROM kategorie WHERE typ='2' ORDER BY podkategorie");
+									 while($row = mysqli_fetch_array($sql_kraje)){
+										 ?>
+										 <option value="<?php echo $row["id"]; ?>" class="<?php echo $row["kategorie"]; ?>"<?php if($row["podkategorie"] == $main->DataReturn('podkategorie','zakazky','id',$_GET["id"])) echo " selected"; ?>><?php echo $row["podkategorie"]; ?>
+										 <?php
+									 }
+									?>
+								</select>
+							</div>
+                            </div>
+                            </div>	
+							</div>
+							<div class="form-group" id="job-description-group">
+								<label for="job-description" name="popis">Popis</label>
+								<textarea class="textarea form-control" name="popis" id="job-description"><?php echo $user->Data('popis','zakazky','id',$_GET["id"]); ?></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="row text-center">
+						<p>&nbsp;</p>
+						<input type="hidden" name="funkceSkript" value="UpravitZakazku">
+						<button type="submit" class="btn btn-primary">Odeslat <i class="fa fa-arrow-right"></i></a>
+					</div>
+				</form>
+                <?php } ?>
+			</div>
+		</section>
+
+  <script>
+  var dateToday = new Date(); 
+
+  $(function() {
+    $( "#datepicker" ).datepicker({minDate: dateToday});
+  });
+  $(function() {
+    $( "#datepicker2" ).datepicker({minDate: dateToday});
+  });  
+  </script>			
+
+  <?php
+  if($_POST["funkceSkript"] == "UpravitZakazku"){
+	$zakazka->UpravitZakazku($_GET["id"],$_POST["email"],$_POST["datum_od"],$_POST["datum_do"],$_POST["cas_od"],$_POST["cas_do"],$_POST["cena"],
+	                             $_POST["nadpis"],$_POST["mesto"],$_POST["kraj"],$_POST["typ_spoluprace"],$_POST["kategorie"],$_POST["podkategorie"],$_POST["obrazek"],$_POST["popis"]);
+   }   
+   ?>
